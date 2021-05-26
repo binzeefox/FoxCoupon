@@ -1,7 +1,6 @@
-package com.binzee.couponserver.server.error
+package com.binzee.coupon.common.storage
 
-import com.binzee.coupon.common.storage.CMDPackage
-import com.binzee.couponserver.server.Commands
+import com.google.gson.GsonBuilder
 import org.java_websocket.WebSocket
 
 /**
@@ -14,8 +13,9 @@ class ErrorCMD(
     client: WebSocket,
     private val method: String,
     private val errorMsg: String,
-    private val reqCode: Int
-) : CMDPackage(client) {
+    reqCode: String?
+) : CMDPackage(client, reqCode) {
+    private val gson = GsonBuilder().enableComplexMapKeySerialization().create()
 
     override fun response() {
         val map = mapOf(
@@ -24,6 +24,6 @@ class ErrorCMD(
             Pair("reqCode", reqCode),
             Pair("errorMsg", errorMsg)
         )
-        client.send(Commands.gson.toJson(map))
+        client.send(gson.toJson(map))
     }
 }

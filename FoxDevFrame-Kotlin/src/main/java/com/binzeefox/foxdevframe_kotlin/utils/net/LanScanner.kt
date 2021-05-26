@@ -13,7 +13,7 @@ import java.util.concurrent.Executors
  * 2021/01/29 14:17
  */
 class LanScanner(
-        private val myAddress: String = DeviceStatus.localIPAddress,
+        private val myAddress: String = DeviceStatus.localIPAddress
 ) {
     private val workThreadPool = Executors.newCachedThreadPool()    // 工作线程池
     private val loopThreadPool = Executors.newSingleThreadExecutor()    // 循环线程池

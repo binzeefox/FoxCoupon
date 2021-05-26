@@ -14,8 +14,8 @@ import org.java_websocket.WebSocket
  */
 class CMDUsableCoupon(
     client: WebSocket,
-    private val reqCode: Int
-): CMDPackage(client) {
+    reqCode: String
+): CMDPackage(client, reqCode) {
 
     override fun response() {
         val map = mapOf(

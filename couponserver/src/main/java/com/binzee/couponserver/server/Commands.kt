@@ -1,13 +1,11 @@
 package com.binzee.couponserver.server
 
 import android.util.Log
-import com.binzee.coupon.common.db.Coupon
-import com.binzee.couponserver.server.broadcast.BroadcastNewCoupon
 import com.binzee.couponserver.server.cmd.CMDCoupon
 import com.binzee.couponserver.server.cmd.CMDSearchHost
 import com.binzee.couponserver.server.cmd.CMDUsableCoupon
 import com.binzee.couponserver.server.cmd.CMDUseCoupon
-import com.binzee.couponserver.server.error.ErrorCMD
+import com.binzee.coupon.common.storage.ErrorCMD
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import org.java_websocket.WebSocket
@@ -47,25 +45,46 @@ object Commands {
      */
     private fun processCMD(data: JSONObject, conn: WebSocket?) {
         val method: String = data.getString("method")
-        val reqCode: Int = data.getInt("reqCode")
+        val reqCode: String? = data.getString("reqCode")
         val params: String? = data.getString("params")
+
+        if (reqCode == null) {
+            Log.e(TAG, "processCMD: processCMD failed, null reqCode")
+            ErrorCMD(
+                conn!!,
+                method,
+                "请求码为空",
+                reqCode
+            ).response()
+            return
+        }
 
         try {
             // 挑选合适的CMDPackage实现，然后返回响应
             when(method) {
                 // 搜索主机
-                "search-host" -> CMDSearchHost(conn!!, reqCode)
+                "search-host" -> CMDSearchHost(conn!!, reqCode!!)
                 // 查询可用兑换券
-                "usable-coupon" -> CMDUsableCoupon(conn!!, reqCode)
+                "usable-coupon" -> CMDUsableCoupon(conn!!, reqCode!!)
                 // 查询特定uid兑换券
-                "coupon" -> CMDCoupon(conn!!, reqCode, gson.fromJson(params, mapType))
+                "coupon" -> CMDCoupon(conn!!, reqCode!!, gson.fromJson(params, mapType))
                 // 使用兑换券
-                "use-coupon" -> CMDUseCoupon(conn!!, reqCode, gson.fromJson(params, mapType))
-                else -> ErrorCMD(conn!!, method, "无效操作", reqCode)
+                "use-coupon" -> CMDUseCoupon(conn!!, reqCode!!, gson.fromJson(params, mapType))
+                else -> ErrorCMD(
+                    conn!!,
+                    method,
+                    "无效操作",
+                    reqCode!!
+                )
             }.response()
         } catch (e: Exception) {
             Log.e(TAG, "processCMD: processCMD failed", e)
-            ErrorCMD(conn!!, method, "服务器未知错误", reqCode)
+            ErrorCMD(
+                conn!!,
+                method,
+                "服务器未知错误",
+                reqCode
+            ).response()
         }
     }
 

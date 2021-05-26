@@ -15,9 +15,9 @@ import org.java_websocket.WebSocket
  */
 class CMDUseCoupon(
     client: WebSocket,
-    private val reqCode: Int,
+    reqCode: String,
     private val params: Map<String, String?>
-): CMDPackage(client) {
+): CMDPackage(client, reqCode) {
 
     override fun response() {
         val uid = params["uid"]

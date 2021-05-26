@@ -12,8 +12,8 @@ import org.java_websocket.WebSocket
  */
 class CMDSearchHost(
     client: WebSocket,
-    private val reqCode: Int
-) : CMDPackage(client) {
+    reqCode: String
+) : CMDPackage(client, reqCode) {
 
     override fun response() {
         val map = mapOf(

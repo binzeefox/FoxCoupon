@@ -9,6 +9,6 @@ import org.java_websocket.WebSocket
  * @author tong.xw
  * 2021/05/25 11:06
  */
-abstract class CMDPackage(val client: WebSocket)  {
+abstract class CMDPackage(val client: WebSocket, val reqCode: String?)  {
     abstract fun response()
 }
